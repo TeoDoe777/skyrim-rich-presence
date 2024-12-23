@@ -1,0 +1,41 @@
+name: Build Project
+
+on:
+  workflow_dispatch: # Позволяет запускать действие вручную
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22.x'
+
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+
+    - name: Install dependencies
+      run: |
+        .\vcpkg\vcpkg.exe install commonlibsse-ng simpleini magic-enum rapidjson
+
+    - name: Configure CMake
+      run: cmake -S . -B build --preset=FLATRIM
+
+    - name: Build with CMake
+      run: cmake --build build --config Release
+
+    - name: Copy DLLs
+      run: |
+        mkdir dist\SKSE\Plugins
+        xcopy "build\release\*.dll" "dist\SKSE\Plugins\" /I /Y
+        xcopy "build\release\*.pdb" "dist\SKSE\Plugins\" /I /Y
+
+    - name: Copy package
+      run: xcopy "package" "dist" /I /Y /E
