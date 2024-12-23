@@ -22,7 +22,7 @@ jobs:
         .\vcpkg\bootstrap-vcpkg.bat
 
     - name: Install dependencies
-      run: .\vcpkg\vcpkg.exe install commonlibsse-ng simpleini magic-enum rapidjson
+      run: .\vcpkg\vcpkg.exe install
 
     - name: Configure CMake
       run: cmake -S . -B build --preset=FLATRIM
