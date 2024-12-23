@@ -21,6 +21,9 @@ jobs:
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
 
+    - name: Set VCPKG_ROOT
+      run: echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+
     - name: Install dependencies
       run: .\vcpkg\vcpkg.exe install
 
