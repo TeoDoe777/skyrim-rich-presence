@@ -18,7 +18,7 @@ jobs:
 
     - name: Cache vcpkg
       id: cache-vcpkg
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ github.workspace }}/vcpkg
@@ -44,7 +44,7 @@ jobs:
       run: echo $VCPKG_ROOT
 
     - name: Cache dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ github.workspace }}/vcpkg/installed
         key: ${{ runner.os }}-vcpkg-installed-${{ hashFiles('**/vcpkg.json') }}
@@ -55,7 +55,7 @@ jobs:
       run: .\vcpkg\vcpkg.exe install
 
     - name: Cache CMake
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ github.workspace }}/build
         key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}

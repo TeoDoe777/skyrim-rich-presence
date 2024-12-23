@@ -20,15 +20,17 @@ include(XSEPlugin)
 # Добавление путей включения для vcpkg
 include_directories(${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include)
 
-# Создание библиотеки
-add_library(${PROJECT_NAME} SHARED)
+# Создание библиотеки (перемещено сюда и изменено)
+if(NOT TARGET ${PROJECT_NAME})
+    add_library(${PROJECT_NAME} SHARED)
+endif()
 
 # Поиск SimpleIni
 find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
 
 # Добавление путей включения для SimpleIni
 target_include_directories(
-    "${PROJECT_NAME}"
+    ${PROJECT_NAME}
     PRIVATE
         ${SIMPLEINI_INCLUDE_DIRS}
 )
@@ -42,8 +44,10 @@ target_link_libraries(
     ${PROJECT_NAME} 
     PRIVATE
         magic_enum::magic_enum
-        rapidjson
 )
+
+# Добавление RapidJSON как системного включения
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${RAPIDJSON_INCLUDE_DIRS})
 
 # Добавление исходных файлов
 target_sources(${PROJECT_NAME}
