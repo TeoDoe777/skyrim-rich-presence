@@ -22,6 +22,7 @@ jobs:
         .\vcpkg\bootstrap-vcpkg.bat
 
     - name: Set VCPKG_ROOT
+      shell: bash
       run: echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
 
     - name: Install dependencies
