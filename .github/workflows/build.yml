@@ -1,7 +1,7 @@
 name: Build Project
 
 on:
-  workflow_dispatch: # Позволяет запускать действие вручную
+  workflow_dispatch:
 
 jobs:
   build:
@@ -9,14 +9,28 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '22.x'
 
+    - name: Cache vcpkg
+      id: cache-vcpkg
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ github.workspace }}/vcpkg
+          !${{ github.workspace }}/vcpkg/buildtrees
+          !${{ github.workspace }}/vcpkg/packages
+          !${{ github.workspace }}/vcpkg/downloads
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+        restore-keys: |
+          ${{ runner.os }}-vcpkg-
+
     - name: Install vcpkg
+      if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       run: |
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
@@ -29,14 +43,30 @@ jobs:
       shell: bash
       run: echo $VCPKG_ROOT
 
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/vcpkg/installed
+        key: ${{ runner.os }}-vcpkg-installed-${{ hashFiles('**/vcpkg.json') }}
+        restore-keys: |
+          ${{ runner.os }}-vcpkg-installed-
+
     - name: Install dependencies
       run: .\vcpkg\vcpkg.exe install
+
+    - name: Cache CMake
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/build
+        key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-
 
     - name: Configure CMake
       run: cmake -S . -B build --preset=FLATRIM
 
     - name: Build with CMake
-      run: cmake --build build --config Release
+      run: cmake --build build --config Release --parallel 4
 
     - name: Copy DLLs
       run: |

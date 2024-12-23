@@ -1,7 +1,12 @@
 {
-  "name": "commonlibsse-plugin",
+"name": "commonlibsse-plugin",
   "version-string": "1.0.0",
   "description": "",
   "license": "MIT",
-  "dependencies": ["commonlibsse-ng", "simpleini", "magic-enum", "rapidjson"]
+  "dependencies": [
+    "commonlibsse-ng",
+    "simpleini",
+    "magic-enum",
+    "rapidjson"
+  ]
 }
