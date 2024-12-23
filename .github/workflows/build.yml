@@ -1,7 +1,7 @@
 name: Build Project
 
 on:
-  workflow_dispatch: # Позволяет запускать действие вручную
+  workflow_dispatch: 
 
 jobs:
   build:
